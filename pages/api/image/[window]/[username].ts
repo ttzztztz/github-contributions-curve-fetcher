@@ -8,10 +8,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { window, username } = req.query;
 
   const browser = await puppeteer.launch({
-    // args: chrome.args,
-    // executablePath: await chrome.executablePath,
-    // headless: chrome.headless,
-    executablePath: "/usr/bin/chromium",
+    args: chrome.args,
+    executablePath: await chrome.executablePath,
+    headless: chrome.headless,
+    // executablePath: "/usr/bin/chromium",
   });
   const page = await browser.newPage();
   await page.goto(`${ENDPOINT}/image/${window}/${username}`);
