@@ -35,7 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     const element: HTMLCanvasElement = document.querySelector(
       "#chart-area canvas"
     );
-    return element.toDataURL();
+    return element.toDataURL('image/png', 1.0);
   });
   await page.close();
 
