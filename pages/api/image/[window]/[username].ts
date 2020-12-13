@@ -37,7 +37,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     );
     return element.toDataURL('image/png', 1.0);
   });
-  await page.close();
+  await browser.close();
 
   const canvasBuffer = Buffer.from(
     canvasURL.replace("data:image/png;base64,", ""),
