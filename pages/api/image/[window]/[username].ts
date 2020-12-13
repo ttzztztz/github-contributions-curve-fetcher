@@ -11,11 +11,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     args: chrome.args,
     executablePath: await chrome.executablePath,
     headless: chrome.headless,
+    // executablePath: "/usr/bin/chromium",
   });
   const page = await browser.newPage();
   await page.goto(`${ENDPOINT}/image/${window}/${username}`);
   const binary = await page.screenshot({ encoding: "binary" });
   await page.close();
 
-  res.write(binary);
+  res.write(binary, () => {
+    res.destroy();
+  });
 };
