@@ -3,23 +3,37 @@ import { NextApiRequest, NextApiResponse } from "next";
 import puppeteer from "puppeteer-core";
 
 const ENDPOINT = `https://github-contributions-curve.ttzztztz.vercel.app/`;
+const NODE_ENV = process.env.NODE_ENV;
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { window, username } = req.query;
 
-  const browser = await puppeteer.launch({
-    args: chrome.args,
-    executablePath: await chrome.executablePath,
-    headless: chrome.headless,
-    // executablePath: "/usr/bin/chromium",
-  });
+  const browser = await puppeteer.launch(
+    NODE_ENV === "development"
+      ? {
+          executablePath: "/usr/bin/chromium",
+        }
+      : {
+          args: chrome.args,
+          executablePath: await chrome.executablePath,
+          headless: chrome.headless,
+        }
+  );
   const page = await browser.newPage();
   await page.goto(`${ENDPOINT}/image/${window}/${username}`);
-  const binary = await page.screenshot({ encoding: "binary" });
+
+  const canvasURL = await page.evaluate(() => {
+    const element: HTMLCanvasElement = document.querySelector(
+      "#chart-area canvas"
+    );
+    return element.toDataURL();
+  });
   await page.close();
 
+  const canvasBuffer = Buffer.from(
+    canvasURL.replace("data:image/png;base64,", ""),
+    "base64"
+  );
   res.setHeader("Content-Type", "image/png");
-  res.write(binary, () => {
-    res.destroy();
-  });
+  res.send(canvasBuffer);
 };
