@@ -5,18 +5,18 @@ export interface IData {
 
 let store: { [key: string]: IData | undefined } = {};
 
-export const cacheGet = (key: string): Buffer | undefined => {
+export const cacheGet = (key: string): [Buffer | undefined, boolean] => {
   const _data = store[key];
   if (_data !== undefined) {
     const timestamp = Date.now();
     if (_data.expire < timestamp) {
-      delete store[key];
-      return undefined;
+      const buf = store[key].data;
+      return [buf, true];
     }
 
-    return _data.data;
+    return [_data.data, false];
   } else {
-    return undefined;
+    return [undefined, true];
   }
 };
 
