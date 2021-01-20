@@ -44,5 +44,5 @@ let interval: null | NodeJS.Timeout = null;
 if (interval === null) {
   interval = setInterval(() => {
     cacheClean();
-  }, 60 * 60 * 1000);
+  }, 8 * 60 * 60 * 1000);
 }
